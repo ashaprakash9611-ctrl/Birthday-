@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Universe 🌌✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0d0f18 0%, #1a1c2e 50%, #2a1b2e 100%);
+            --accent-gold: #e2b86b;
+            --accent-rose: #e87a90;
+            --glass-bg: rgba(22, 25, 42, 0.65);
+            --glass-border: rgba(226, 184, 107, 0.25);
+            --text-light: #f3f4f6;
+            --text-dim: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-light);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Canvas Overlay */
+        #starsCanvas, #confettiCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        #confettiCanvas { z-index: 100; }
+
+        /* Main Card Container */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 40px 32px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 10;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .card::-webkit-scrollbar { display: none; }
+        .card { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Pages */
+        .page {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .page.active { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Headings & Typography */
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            letter-spacing: 1.5px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .bday-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+            font-style: italic;
+            text-shadow: 0 0 20px rgba(226, 184, 107, 0.3);
+        }
+
+        p {
+            font-size: 0.98rem;
+            color: var(--text-dim);
+            margin-bottom: 24px;
+            line-height: 1.6;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, #c59b27 0%, #e2b86b 100%);
+            color: #0d0f18;
+            border: none;
+            padding: 14px 36px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(226, 184, 107, 0.25);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            outline: none;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(226, 184, 107, 0.4);
+            background: linear-gradient(135deg, #e2b86b 0%, #f3d492 100%);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-light);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-height: 50px;
+        }
+
+        .hint-text {
+            font-size: 0.9rem;
+            color: var(--accent-rose);
+            font-weight: 400;
+            min-height: 24px;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+
+        /* Elegant Bonsai / Cherry Tree Graphic */
+        .tree-container {
+            width: 100%;
+            max-width: 260px;
+            height: 210px;
+            margin: 0 auto 15px auto;
+        }
+
+        /* Keepsake Note */
+        .keepsake-note {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-style: italic;
+            line-height: 1.6;
+            color: #f3f4f6;
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 2px solid var(--accent-gold);
+            padding: 20px 24px;
+            border-radius: 0 16px 16px 0;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        /* Modern Keepsake Cards Grid */
+        .keepsake-grid {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 24px 0;
+        }
+
+        .keepsake-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            padding: 20px 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 110px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .keepsake-card.visited {
+            border-color: var(--accent-gold);
+            background: rgba(226, 184, 107, 0.08);
+        }
+
+        .keepsake-card.visited::after {
+            content: "✦";
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            color: var(--accent-gold);
+            font-size: 0.8rem;
+        }
+
+        .keepsake-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(226, 184, 107, 0.5);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 10px rgba(226,184,107,0.3));
+        }
+
+        .card-label {
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* Bow & Arrow Scene */
+        .archery-scene {
+            position: relative;
+            height: 250px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .target-heart {
+            font-size: 4rem;
+            transition: all 0.4s ease;
+            filter: drop-shadow(0 0 20px rgba(232, 122, 144, 0.6));
+        }
+
+        .bow-trigger {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            padding: 10px;
+        }
+
+        .bow-trigger:hover {
+            transform: scale(1.08);
+        }
+
+        .arrow-svg {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 80px;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .arrow-shooting {
+            animation: shootUp 0.5s forwards ease-in-out;
+        }
+
+        @keyframes shootUp {
+            0% { transform: translateX(-50%) translateY(0); opacity: 1; }
+            100% { transform: translateX(-50%) translateY(-140px); opacity: 0; }
+        }
+
+        /* Cake & Candle */
+        .cake-container {
+            margin: 25px auto;
+            position: relative;
+            width: 140px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .candle-box {
+            display: flex;
+            gap: 12px;
+            margin-bottom: -4px;
+            z-index: 2;
+        }
+
+        .candle {
+            width: 8px;
+            height: 32px;
+            background: linear-gradient(to bottom, #e2b86b, #96702c);
+            border-radius: 3px;
+            position: relative;
+        }
+
+        .flame {
+            width: 10px;
+            height: 16px;
+            background: #ffb703;
+            border-radius: 50% 50% 20% 20%;
+            position: absolute;
+            top: -14px;
+            left: -1px;
+            box-shadow: 0 0 12px #ffb703, 0 0 20px #fb8500;
+            animation: flicker 0.8s infinite alternate;
+            transition: opacity 0.6s ease;
+        }
+
+        .flame.blown-out { opacity: 0; }
+
+        @keyframes flicker {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15); }
+        }
+
+        .cake-layer {
+            background: linear-gradient(135deg, #2a1b2e, #1a1c2e);
+            border: 1px solid var(--accent-gold);
+            border-radius: 12px 12px 0 0;
+        }
+        .cake-top { width: 100px; height: 40px; }
+        .cake-bottom { width: 140px; height: 50px; border-top: none; }
+
+        .timer-display {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            color: var(--accent-gold);
+            margin: 10px 0;
+        }
+
+        /* PIN Lock System */
+        .pin-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 25px 0 15px 0;
+        }
+
+        .pin-digit {
+            width: 50px;
+            height: 60px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--accent-gold);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .pin-digit:focus {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 15px rgba(226, 184, 107, 0.25);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .lock-feedback {
+            font-size: 0.9rem;
+            min-height: 24px;
+            margin-top: 8px;
+        }
+
+        /* Grand Proposal Screen */
+        .proposal-wrapper {
+            background: linear-gradient(rgba(13, 15, 24, 0.75), rgba(13, 15, 24, 0.85)), 
+                        url('https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            border-radius: 20px;
+            padding: 40px 20px;
+            border: 1px solid var(--glass-border);
+            width: 100%;
+        }
+
+        .proposal-heading {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: #ffffff;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvases -->
+    <canvas id="starsCanvas"></canvas>
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- Background Audio: Golden Hour by JVKE -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-piano-112199.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="card">
+
+        <!-- PAGE 1: Aesthetic Blossom Scene -->
+        <div class="page active" id="page1">
+            <div class="tree-container">
+                <svg viewBox="0 0 300 240" width="100%" height="100%">
+                    <path d="M150 230 C150 170, 125 140, 135 90 C140 70, 120 50, 110 30 M135 90 C160 70, 180 60, 200 40 M145 130 C175 110, 195 100, 215 80 M130 150 C100 130, 80 110, 65 90" 
+                          stroke="#e2b86b" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.6"/>
+                    <g fill="#e87a90" opacity="0.7">
+                        <circle cx="110" cy="30" r="16"/><circle cx="200" cy="40" r="18"/><circle cx="215" cy="80" r="15"/>
+                        <circle cx="65" cy="90" r="16"/><circle cx="135" cy="80" r="22"/>
+                    </g>
+                    <g fill="#f3d492" opacity="0.8">
+                        <circle cx="105" cy="25" r="10"/><circle cx="195" cy="35" r="12"/><circle cx="210" cy="75" r="9"/>
+                        <circle cx="60" cy="85" r="10"/><circle cx="130" cy="75" r="14"/>
+                    </g>
+                </svg>
+            </div>
+            <h1>Prathuuu</h1>
+            <p>A quiet space crafted with love, just for you...</p>
+            <button class="btn" onclick="startExperience()">Begin Experience ➔</button>
+        </div>
+
+        <!-- PAGE 2: Romantic Question -->
+        <div class="page" id="page2">
+            <div style="font-size: 2.5rem; margin-bottom: 15px; color: var(--accent-rose);">✦</div>
+            <h1>Do you love me?</h1>
+            <div class="hint-text" id="no-hint"></div>
+            <div class="btn-group">
+                <button class="btn" id="btn-yes" onclick="handleYes()">Always & Forever</button>
+                <button class="btn btn-secondary" id="btn-no" onclick="handleNo()">Not Sure 😜</button>
+            </div>
+        </div>
+
+        <!-- PAGE 3: 3 Keepsakes Selection -->
+        <div class="page" id="page3">
+            <h1>Choose a Chapter</h1>
+            <p id="keepsakeInstruction">Explore all three secrets to reveal the path forward.</p>
+            <div class="keepsake-grid">
+                <div class="keepsake-card" id="card1" onclick="openKeepsake(1)">
+                    <div class="card-icon">📜</div>
+                    <span class="card-label">Chapter I</span>
+                </div>
+                <div class="keepsake-card" id="card2" onclick="openKeepsake(2)">
+                    <div class="card-icon">💐</div>
+                    <span class="card-label">Chapter II</span>
+                </div>
+                <div class="keepsake-card" id="card3" onclick="openKeepsake(3)">
+                    <div class="card-icon">✨</div>
+                    <span class="card-label">Chapter III</span>
+                </div>
+            </div>
+            <button class="btn" id="proceedBtn" style="display:none;" onclick="nextPage(4)">Target My Heart ➔</button>
+        </div>
+
+        <!-- PAGE 3A: Chapter I -->
+        <div class="page" id="page3a">
+            <h1>Chapter I</h1>
+            <div class="keepsake-note">
+                "You are my favorite thought in every quiet moment. Loving you feels as natural as breathing."
+            </div>
+            <button class="btn btn-secondary" onclick="backToChapters()">Return to Chapters</button>
+        </div>
+
+        <!-- PAGE 3B: Chapter II -->
+        <div class="page" id="page3b">
+            <h1>Chapter II</h1>
+            <div style="font-size: 3rem; margin: 15px 0;">🌸💐🪻</div>
+            <div class="keepsake-note">
+                "A bouquet of endless moments, woven with gratitude for having you in my life."
+            </div>
+            <button class="btn btn-secondary" onclick="backToChapters()">Return to Chapters</button>
+        </div>
+
+        <!-- PAGE 3C: Chapter III -->
+        <div class="page" id="page3c">
+            <h1>Chapter III</h1>
+            <div class="keepsake-note">
+                "Sending you endless warmth, soft whispers, and eternal affection."
+            </div>
+            <button class="btn btn-secondary" onclick="backToChapters()">Return to Chapters</button>
+        </div>
+
+        <!-- PAGE 4: Archery Scene -->
+        <div class="page" id="page4">
+            <h1>Target My Heart</h1>
+            <p>Release Cupid's arrow to unlock my heart.</p>
+            <div class="archery-scene">
+                <div class="target-heart" id="targetHeart">💖</div>
+                <div class="bow-trigger" onclick="shootArrow()">
+                    <svg id="arrowSvg" class="arrow-svg" viewBox="0 0 24 80">
+                        <line x1="12" y1="75" x2="12" y2="5" stroke="#e2b86b" stroke-width="2"/>
+                        <polygon points="12,0 6,15 18,15" fill="#e2b86b"/>
+                    </svg>
+                    <div style="font-size: 2.8rem; margin-top: 50px;">🏹</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 5: Birthday Celebration -->
+        <div class="page" id="page5">
+            <div class="bday-title">Happy Birthday, My Love</div>
+            <p>I knew it... you love me the most, you silly human. ❤️</p>
+            <button class="btn" onclick="nextPage(6)">Make A Wish ➔</button>
+        </div>
+
+        <!-- PAGE 6: Cake & Wish Countdown -->
+        <div class="page" id="page6">
+            <h1 id="cakeHeading">Close Your Eyes</h1>
+            <div class="timer-display" id="timerBox">5</div>
+
+            <div class="cake-container">
+                <div class="candle-box">
+                    <div class="candle"><div class="flame" id="flame1"></div></div>
+                    <div class="candle"><div class="flame" id="flame2"></div></div>
+                </div>
+                <div class="cake-layer cake-top"></div>
+                <div class="cake-layer cake-bottom"></div>
+            </div>
+
+            <p id="cakeSubtext">Take a quiet moment and make your wish...</p>
+            <button class="btn" id="blowBtn" style="display:none;" onclick="blowCandles()">Blow out the candles 🌬️</button>
+        </div>
+
+        <!-- PAGE 7: Passcode Screen -->
+        <div class="page" id="page7">
+            <h1>One Last Secret</h1>
+            <p>Enter my birthday date & month (DD-MM) to unlock:</p>
+
+            <div class="pin-container">
+                <input type="text" class="pin-digit" maxlength="1" id="pin1" oninput="moveNext(1, this)">
+                <input type="text" class="pin-digit" maxlength="1" id="pin2" oninput="moveNext(2, this)">
+                <span style="font-size: 1.5rem; align-self: center; color: var(--text-dim);">-</span>
+                <input type="text" class="pin-digit" maxlength="1" id="pin3" oninput="moveNext(3, this)">
+                <input type="text" class="pin-digit" maxlength="1" id="pin4" oninput="moveNext(4, this)">
+            </div>
+
+            <div class="lock-feedback" id="lockStatus"></div>
+            <button class="btn" onclick="checkPin()">Unlock Secret 🔓</button>
+        </div>
+
+        <!-- PAGE 8: Grand Proposal Screen -->
+        <div class="page" id="page8">
+            <div class="proposal-wrapper">
+                <div class="proposal-heading">Will You Marry Me?</div>
+                <p style="color: #e2b86b; font-style: italic; margin-bottom: 30px;">"In every timeline, I would choose you."</p>
+                <button class="btn" onclick="acceptProposal()" style="padding: 16px 45px; font-size: 1rem;">YES 💖</button>
+                <p style="font-size: 0.
